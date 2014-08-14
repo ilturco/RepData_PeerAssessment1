@@ -2,14 +2,48 @@
 
 
 ## Loading and preprocessing the data
+```{r cache = TRUE}
+untar("./activity.zip", compressed = 'gzip')name
+datas <- read.csv('./activity.csv', na.strings="NA")
+```
+We now have to convert the "date" field to a proper 'Date' datatype
+```{r cache = TRUE}
+datas[, "date"] <- as.Date(datas$date)
+```
 
+### removing NAs value for steps and transform date column to date value 
+```{r}
+datas_nona <- datas[!is.na(datas$steps),]
 
+```
 
 ## What is mean total number of steps taken per day?
+We use here the package PLYR, which is a tool for doing split-apply-combine procedures in a way that resambes the *SQL* command *GROUP BY*
+```{r}
 
-
+daily_steps <- ddply(datas_nona, .(date), summarise, steps=sum(steps))
+```
+Or we can use the function *aggregate*
+```{r}
+freqs <- aggregate(datas_nona$steps, by=list(datas_nona$date), FUN=sum)
+```
+Simple histogram and mean and median
+```{r}
+hist(daily_steps$steps, xlab="steps per day")
+mean(daily_steps$steps)
+median(daily_steps$steps)
+```
 
 ## What is the average daily activity pattern?
+
+```{r}
+average_date <- ddply(datas_nona, .(interval), summarise, steps=mean(steps))
+plot(average_date$interval, average_date$steps, type="l", xlab="5-minute interval", 
+ylab="Average steps",main="Average daily activity")
+
+# Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+average_date[average_date$steps==max(average_date$steps),]
+```
 
 
 
