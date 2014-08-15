@@ -64,7 +64,7 @@ hist(new_daily_steps$steps, main="Number of Steps", xlab="steps taken each day",
 ```{r}
 mean(new_daily_steps$steps)
 median(new_daily_steps$steps)
-daily_steps_1 <- sum(data_waNA$steps)
+daily_steps_1 <- sum(datas_nona$steps)
 daily_steps_2 <- sum(merged$steps)
 diff <- daily_steps_2 -daily_steps_1 []
 ```
@@ -75,6 +75,8 @@ Mean values didn't change as imputation used the average on 5-mi interval
 weekdays <- weekdays(as.Date(merged$date))
 data_weekdays <- cbind(merged, day = weekdays)
 data_weekdays$wk <- ifelse(data_weekdays$day %in% c("Saturday", "Sunday"),"weekend", "weekday")
-average_week <- ddply(data_weekdays2, .(interval, wk), summarise, steps=mean(steps))
+average_week <- ddply(data_weekdays, .(interval, wk), summarise, steps=mean(steps))
+library(lattice)
+
 xyplot(steps ~ interval | wk, data = average_week, layout = c(1, 2), type="l")
 ```
